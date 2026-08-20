@@ -149,6 +149,7 @@
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Category</th>
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Price</th>
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Stock</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Weight</th>
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Status</th>
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
                         </tr>
@@ -220,6 +221,13 @@
                                 </div>
                             </td>
                             <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                                @if($product->weight > 0)
+                                    <span class="text-sm text-gray-900">{{ $product->weight }} g</span>
+                                @else
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Empty</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
                                 <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $product->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                     {{ $product->is_active ? 'Active' : 'Inactive' }}
                                 </span>
@@ -246,7 +254,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="7" class="px-6 py-12 text-center text-gray-500">
                                 <i class="fas fa-box text-4xl mb-4"></i>
                                 <p class="text-lg">No products found</p>
                                 <p class="text-sm">Try adjusting your filters or create a new product</p>
