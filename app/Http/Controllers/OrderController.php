@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Cart;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use App\Services\BiteshipService;
 
 class OrderController extends Controller
@@ -87,8 +90,15 @@ class OrderController extends Controller
         $subtotal = $cartItems->sum(function ($item) {
             return $item->getTotalPrice();
         });
-        
-        $shippingCost = $request->shipping_cost;
+
+        // Verify the shipping cost server-side against the Biteship quote
+        $shippingCost = $this->verifyShippingCost(
+            $request->destination_area_id,
+            $request->shipping_cost,
+            $request->shipping_service,
+            $cartItems
+        );
+
         $totalAmount = $subtotal + $shippingCost;
 
         DB::beginTransaction();
@@ -101,6 +111,27 @@ class OrderController extends Controller
                 $user->update(['phone' => $request->customer_phone]);
             }
 
+            // Re-validate stock availability (with row locks to prevent over-selling)
+            foreach ($cartItems as $cartItem) {
+                if ($cartItem->variant_id) {
+                    $variant = ProductVariant::where('id', $cartItem->variant_id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$variant || $variant->quantity < $cartItem->quantity) {
+                        throw new \Exception('Stok variant tidak mencukupi untuk "' . $cartItem->product->name . '". Silakan perbarui keranjang Anda.');
+                    }
+                } else {
+                    $product = Product::where('id', $cartItem->product_id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$product || $product->stock < $cartItem->quantity) {
+                        throw new \Exception('Stok "' . $cartItem->product->name . '" tidak mencukupi. Sisa stok: ' . ($product->stock ?? 0) . '.');
+                    }
+                }
+            }
+
             // Build complete shipping address
             $fullAddress = $request->shipping_address . ', ' . 
                           $request->area_name . ', ' .
@@ -108,7 +139,7 @@ class OrderController extends Controller
 
             // Create order
             $order = Order::create([
-                'order_number' => 'ORD-' . time() . '-' . Auth::id(),
+                'order_number' => 'ORD-' . now()->format('ymdHis') . '-' . strtoupper(Str::random(6)),
                 'user_id' => Auth::id(),
                 'customer_name' => $request->customer_name,
                 'customer_email' => $request->customer_email,
@@ -145,6 +176,14 @@ class OrderController extends Controller
                 
                 // Update sold count for the product
                 $cartItem->product->increment('sold_count', $cartItem->quantity);
+
+                // Consume flash sale stock for non-variant items (flash price applies to them)
+                if (!$cartItem->variant_id) {
+                    $flashItem = $cartItem->product->getCurrentFlashSaleItem();
+                    if ($flashItem) {
+                        $flashItem->increment('sold_count', $cartItem->quantity);
+                    }
+                }
             }
 
             // Clear cart
@@ -157,8 +196,41 @@ class OrderController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Something went wrong. Please try again.');
+            return redirect()->back()->with('error', $e->getMessage() ?: 'Something went wrong. Please try again.');
         }
+    }
+
+    /**
+     * Verify the submitted shipping cost against the Biteship quote.
+     * If Biteship is unavailable, fall back to trusting the client value.
+     */
+    private function verifyShippingCost($destinationAreaId, $submittedCost, $submittedService, $cartItems)
+    {
+        $totalWeight = $cartItems->sum(function ($item) {
+            $weight = $item->product->weight > 0 ? $item->product->weight : 200;
+            return $weight * $item->quantity;
+        });
+
+        try {
+            $rates = app(BiteshipService::class)->getRates($destinationAreaId, $totalWeight);
+        } catch (\Exception $e) {
+            return $submittedCost;
+        }
+
+        if (isset($rates['error']) || empty($rates)) {
+            return $submittedCost;
+        }
+
+        $matched = collect($rates)->first(function ($rate) use ($submittedCost, $submittedService) {
+            return (int) $rate['price'] === (int) $submittedCost &&
+                   (empty($submittedService) || $rate['courier_service_name'] === $submittedService);
+        });
+
+        if (!$matched) {
+            throw new \Exception('Harga ongkir tidak valid. Silakan refresh halaman checkout dan pilih ulang pengiriman.');
+        }
+
+        return (float) $submittedCost;
     }
 
     public function uploadPaymentProof(Request $request, Order $order)

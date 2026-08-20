@@ -43,7 +43,7 @@ class OrderItem extends Model
 
     public function getItemName()
     {
-        if ($this->variant_id && $this->variant_name) {
+        if ($this->variant_name) {
             return $this->product->name . ' - ' . $this->variant_name;
         }
         return $this->product->name;

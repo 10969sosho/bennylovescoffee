@@ -10,6 +10,7 @@ use App\Models\ProductVariant;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -149,20 +150,20 @@ class AdminController extends Controller
 
         if ($useVariants) {
             // If using variants, make standard fields optional
-            $validationRules['price'] = 'nullable|numeric|min:0';
+            $validationRules['price'] = 'nullable|numeric|min:0|max:1000000000';
             $validationRules['discount_percentage'] = 'nullable|numeric|min:0|max:100';
-            $validationRules['stock'] = 'nullable|integer|min:0';
-            $validationRules['weight'] = 'required|integer|min:0';
+            $validationRules['stock'] = 'nullable|integer|min:0|max:1000000000';
+            $validationRules['weight'] = 'required|integer|min:0|max:100000000';
             $validationRules['variants'] = 'required|array|min:1';
             $validationRules['variants.*.name'] = 'required|string|max:255';
-            $validationRules['variants.*.quantity'] = 'required|integer|min:0';
-            $validationRules['variants.*.price'] = 'required|numeric|min:0';
+            $validationRules['variants.*.quantity'] = 'required|integer|min:0|max:1000000000';
+            $validationRules['variants.*.price'] = 'required|numeric|min:0|max:1000000000';
         } else {
             // If not using variants, make standard fields required
-            $validationRules['price'] = 'required|numeric|min:0';
+            $validationRules['price'] = 'required|numeric|min:0|max:1000000000';
             $validationRules['discount_percentage'] = 'nullable|numeric|min:0|max:100';
-            $validationRules['stock'] = 'required|integer|min:0';
-            $validationRules['weight'] = 'required|integer|min:0';
+            $validationRules['stock'] = 'required|integer|min:0|max:1000000000';
+            $validationRules['weight'] = 'required|integer|min:0|max:100000000';
         }
 
         $request->validate($validationRules);
@@ -209,17 +210,19 @@ class AdminController extends Controller
 
         // Handle variants
         if ($useVariants && $request->has('variants') && is_array($request->variants)) {
-            foreach ($request->variants as $variantData) {
-                if (!empty($variantData['name']) && !empty($variantData['price'])) {
-                    ProductVariant::create([
-                        'product_id' => $product->id,
-                        'name' => $variantData['name'],
-                        'quantity' => $variantData['quantity'] ?? 0,
-                        'price' => $variantData['price'],
-                        'is_active' => true,
-                    ]);
+            DB::transaction(function () use ($product, $request) {
+                foreach ($request->variants as $variantData) {
+                    if (!empty($variantData['name']) && !empty($variantData['price'])) {
+                        ProductVariant::create([
+                            'product_id' => $product->id,
+                            'name' => $variantData['name'],
+                            'quantity' => $variantData['quantity'] ?? 0,
+                            'price' => $variantData['price'],
+                            'is_active' => true,
+                        ]);
+                    }
                 }
-            }
+            });
         }
 
         $page = session('admin_products_page', 1);
@@ -252,20 +255,20 @@ class AdminController extends Controller
 
         if ($useVariants) {
             // If using variants, make standard fields optional
-            $validationRules['price'] = 'nullable|numeric|min:0';
+            $validationRules['price'] = 'nullable|numeric|min:0|max:1000000000';
             $validationRules['discount_percentage'] = 'nullable|numeric|min:0|max:100';
-            $validationRules['stock'] = 'nullable|integer|min:0';
-            $validationRules['weight'] = 'required|integer|min:0';
+            $validationRules['stock'] = 'nullable|integer|min:0|max:1000000000';
+            $validationRules['weight'] = 'required|integer|min:0|max:100000000';
             $validationRules['variants'] = 'required|array|min:1';
             $validationRules['variants.*.name'] = 'required|string|max:255';
-            $validationRules['variants.*.quantity'] = 'required|integer|min:0';
-            $validationRules['variants.*.price'] = 'required|numeric|min:0';
+            $validationRules['variants.*.quantity'] = 'required|integer|min:0|max:1000000000';
+            $validationRules['variants.*.price'] = 'required|numeric|min:0|max:1000000000';
         } else {
             // If not using variants, make standard fields required
-            $validationRules['price'] = 'required|numeric|min:0';
+            $validationRules['price'] = 'required|numeric|min:0|max:1000000000';
             $validationRules['discount_percentage'] = 'nullable|numeric|min:0|max:100';
-            $validationRules['stock'] = 'required|integer|min:0';
-            $validationRules['weight'] = 'required|integer|min:0';
+            $validationRules['stock'] = 'required|integer|min:0|max:1000000000';
+            $validationRules['weight'] = 'required|integer|min:0|max:100000000';
         }
 
         $request->validate($validationRules);
@@ -329,24 +332,29 @@ class AdminController extends Controller
 
         // Handle variants - delete existing and create new ones
         if ($useVariants && $request->has('variants') && is_array($request->variants)) {
-            // Delete existing variants
-            $product->variants()->delete();
-            
-            // Create new variants
-            foreach ($request->variants as $variantData) {
-                if (!empty($variantData['name']) && !empty($variantData['price'])) {
-                    ProductVariant::create([
-                        'product_id' => $product->id,
-                        'name' => $variantData['name'],
-                        'quantity' => $variantData['quantity'] ?? 0,
-                        'price' => $variantData['price'],
-                        'is_active' => true,
-                    ]);
+            DB::transaction(function () use ($product, $request) {
+                // Delete existing variants. order_items are kept (variant_id set to NULL)
+                // thanks to the nullOnDelete FK, so order history is preserved.
+                $product->variants()->delete();
+
+                // Create new variants
+                foreach ($request->variants as $variantData) {
+                    if (!empty($variantData['name']) && !empty($variantData['price'])) {
+                        ProductVariant::create([
+                            'product_id' => $product->id,
+                            'name' => $variantData['name'],
+                            'quantity' => $variantData['quantity'] ?? 0,
+                            'price' => $variantData['price'],
+                            'is_active' => true,
+                        ]);
+                    }
                 }
-            }
+            });
         } else {
             // If not using variants, delete all existing variants
-            $product->variants()->delete();
+            DB::transaction(function () use ($product) {
+                $product->variants()->delete();
+            });
         }
 
         $page = session('admin_products_page', 1);
@@ -356,6 +364,12 @@ class AdminController extends Controller
 
     public function destroyProduct(Product $product)
     {
+        // Prevent deleting products that have order history (would cascade-delete order items)
+        if ($product->orderItems()->exists()) {
+            return redirect()->route('admin.products', ['page' => session('admin_products_page', 1)])
+                ->with('error', 'Produk tidak dapat dihapus karena sudah memiliki riwayat order. Nonaktifkan produk sebagai gantinya.');
+        }
+
         $product->delete();
         $page = session('admin_products_page', 1);
         return redirect()->route('admin.products', ['page' => $page])

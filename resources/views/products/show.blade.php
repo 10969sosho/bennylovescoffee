@@ -276,6 +276,15 @@ function selectVariant(variantElement) {
         price: variantPrice,
         stock: variantStock
     };
+
+    // Limit quantity input to the variant stock
+    const quantityInput = document.getElementById('quantity');
+    if (quantityInput && variantStock > 0) {
+        quantityInput.setAttribute('max', variantStock);
+        if (parseInt(quantityInput.value) > variantStock) {
+            quantityInput.value = 1;
+        }
+    }
     
     // Update sidebar display
     updateSidebarVariant(variantName, variantPrice);

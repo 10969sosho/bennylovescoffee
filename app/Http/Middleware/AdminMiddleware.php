@@ -17,6 +17,20 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
+        // API (sanctum token) requests -> JSON responses
+        if ($request->is('api/*')) {
+            $user = $request->user();
+
+            if (!$user || $user->role !== 'superadmin') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized. Superadmin privileges required.'
+                ], 403);
+            }
+
+            return $next($request);
+        }
+
         if (!Auth::guard('admin')->check()) {
             return redirect()->route('admin.login');
         }

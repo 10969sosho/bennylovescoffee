@@ -21,6 +21,7 @@
     "@tailwindcss/postcss": "^4.1.14",
     "autoprefixer": "^10.4.21",
     "axios": "^1.7.4",
+    "bootstrap": "^5.3.8",
     "laravel-vite-plugin": "^1.0.0",
     "newman": "^6.0.0",
     "postcss": "^8.5.6",

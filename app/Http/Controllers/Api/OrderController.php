@@ -7,8 +7,11 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Cart;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -45,7 +48,7 @@ class OrderController extends Controller
     public function checkout()
     {
         $cartItems = Cart::where('user_id', Auth::id())
-            ->with('product')
+            ->with(['product', 'variant'])
             ->get();
 
         if ($cartItems->isEmpty()) {
@@ -78,7 +81,7 @@ class OrderController extends Controller
         ]);
 
         $cartItems = Cart::where('user_id', Auth::id())
-            ->with('product')
+            ->with(['product', 'variant'])
             ->get();
 
         if ($cartItems->isEmpty()) {
@@ -91,9 +94,30 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
+            // Re-validate stock availability (with row locks to prevent over-selling)
+            foreach ($cartItems as $cartItem) {
+                if ($cartItem->variant_id) {
+                    $variant = ProductVariant::where('id', $cartItem->variant_id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$variant || $variant->quantity < $cartItem->quantity) {
+                        throw new \Exception('Stock insufficient for variant of "' . $cartItem->product->name . '".');
+                    }
+                } else {
+                    $product = Product::where('id', $cartItem->product_id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$product || $product->stock < $cartItem->quantity) {
+                        throw new \Exception('Stock insufficient for "' . $cartItem->product->name . '".');
+                    }
+                }
+            }
+
             // Create order
             $order = Order::create([
-                'order_number' => 'ORD-' . time() . '-' . Auth::id(),
+                'order_number' => 'ORD-' . now()->format('ymdHis') . '-' . strtoupper(Str::random(6)),
                 'user_id' => Auth::id(),
                 'customer_name' => $request->customer_name,
                 'customer_email' => $request->customer_email,
@@ -109,13 +133,28 @@ class OrderController extends Controller
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $cartItem->product_id,
+                    'variant_id' => $cartItem->variant_id,
+                    'variant_name' => $cartItem->variant_id ? $cartItem->variant->name : null,
                     'quantity' => $cartItem->quantity,
-                    'price' => $cartItem->product->getCurrentPrice(),
+                    'price' => $cartItem->variant_id ? $cartItem->variant->price : $cartItem->product->getCurrentPrice(),
                     'total' => $cartItem->getTotalPrice(),
                 ]);
 
                 // Update product stock
-                $cartItem->product->decrement('stock', $cartItem->quantity);
+                if ($cartItem->variant_id) {
+                    $cartItem->variant->decrement('quantity', $cartItem->quantity);
+                } else {
+                    $cartItem->product->decrement('stock', $cartItem->quantity);
+                }
+
+                $cartItem->product->increment('sold_count', $cartItem->quantity);
+
+                if (!$cartItem->variant_id) {
+                    $flashItem = $cartItem->product->getCurrentFlashSaleItem();
+                    if ($flashItem) {
+                        $flashItem->increment('sold_count', $cartItem->quantity);
+                    }
+                }
             }
 
             // Clear cart
@@ -135,7 +174,7 @@ class OrderController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to create order: ' . $e->getMessage()
-            ], 500);
+            ], 422);
         }
     }
 }

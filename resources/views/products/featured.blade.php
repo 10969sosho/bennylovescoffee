@@ -82,13 +82,33 @@
                             
                             <div class="product-actions">
                                 @auth
-                                    <form action="{{ route('cart.add', $product->slug) }}" method="POST" class="add-to-cart-form">
-                                        @csrf
-                                        <button type="submit" class="add-to-cart-btn">
-                                            <i class="fas fa-plus"></i>
-                                            <i class="fas fa-shopping-cart"></i>
-                                        </button>
-                                    </form>
+                                    @if($product->hasVariants())
+                                        @if($product->getTotalStock() > 0)
+                                            <a href="{{ route('products.show', $product->slug) }}" class="add-to-cart-btn">
+                                                <i class="fas fa-plus"></i>
+                                                <i class="fas fa-shopping-cart"></i>
+                                            </a>
+                                        @else
+                                            <button type="button" class="add-to-cart-btn disabled" disabled>
+                                                <i class="fas fa-times-circle"></i>
+                                            </button>
+                                        @endif
+                                    @else
+                                        @if($product->stock > 0)
+                                            <form action="{{ route('cart.add', $product->slug) }}" method="POST" class="add-to-cart-form">
+                                                @csrf
+                                                <input type="hidden" name="quantity" value="1">
+                                                <button type="submit" class="add-to-cart-btn">
+                                                    <i class="fas fa-plus"></i>
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <button type="button" class="add-to-cart-btn disabled" disabled>
+                                                <i class="fas fa-times-circle"></i>
+                                            </button>
+                                        @endif
+                                    @endif
                                 @else
                                     <a href="{{ route('login') }}" class="add-to-cart-btn">
                                         <i class="fas fa-plus"></i>

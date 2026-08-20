@@ -35,30 +35,32 @@ class CartController extends Controller
         ]);
 
         // If variant is selected, validate against variant stock
+        $variant = null;
+        $availableStock = $product->stock;
         if ($request->variant_id) {
-            $variant = ProductVariant::find($request->variant_id);
-            if (!$variant || $variant->product_id !== $product->id) {
+            $variant = ProductVariant::where('id', $request->variant_id)
+                ->where('product_id', $product->id)
+                ->first();
+            if (!$variant) {
                 return redirect()->back()->with('error', 'Invalid variant selected!');
             }
-            
-            $request->validate([
-                'quantity' => 'required|integer|min:1|max:' . $variant->quantity
-            ]);
-        } else {
-            // If no variant, validate against product stock
-            $request->validate([
-                'quantity' => 'required|integer|min:1|max:' . $product->stock
-            ]);
+            $availableStock = $variant->quantity;
         }
 
-        $cartItem = Cart::where('user_id', Auth::id())
+        $existing = Cart::where('user_id', Auth::id())
             ->where('product_id', $product->id)
             ->where('variant_id', $request->variant_id)
             ->first();
 
-        if ($cartItem) {
-            $cartItem->quantity += $request->quantity;
-            $cartItem->save();
+        // Check total quantity (including what is already in the cart)
+        $newQuantity = ($existing?->quantity ?? 0) + $request->quantity;
+        if ($newQuantity > $availableStock) {
+            return redirect()->back()->with('error', "Stok tidak mencukupi. Sisa stok: {$availableStock}.");
+        }
+
+        if ($existing) {
+            $existing->quantity = $newQuantity;
+            $existing->save();
         } else {
             Cart::create([
                 'user_id' => Auth::id(),
@@ -74,6 +76,10 @@ class CartController extends Controller
 
     public function update(Request $request, Cart $cart)
     {
+        if ($cart->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $maxQuantity = $cart->variant_id ? $cart->variant->quantity : $cart->product->stock;
         
         $request->validate([
@@ -97,6 +103,10 @@ class CartController extends Controller
 
     public function remove(Cart $cart)
     {
+        if ($cart->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $cart->delete();
 
         return redirect()->back()->with('success', 'Product removed from cart!');

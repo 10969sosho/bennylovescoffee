@@ -49,6 +49,22 @@ class UserController extends Controller
             ->with('success', 'User created successfully!');
     }
 
+    public function show(User $user)
+    {
+        if ($user->role !== 'client') {
+            abort(403, 'Unauthorized access.');
+        }
+
+        if (request()->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'data' => $user
+            ]);
+        }
+
+        return redirect()->route('admin.users.edit', $user);
+    }
+
     public function edit(User $user)
     {
         if ($user->role !== 'client') {
