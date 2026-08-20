@@ -91,19 +91,20 @@ class OrderController extends Controller
             return $item->getTotalPrice();
         });
 
-        // Verify the shipping cost server-side against the Biteship quote
-        $shippingCost = $this->verifyShippingCost(
-            $request->destination_area_id,
-            $request->shipping_cost,
-            $request->shipping_service,
-            $cartItems
-        );
-
-        $totalAmount = $subtotal + $shippingCost;
+        $totalAmount = $subtotal;
 
         DB::beginTransaction();
 
         try {
+            // Verify the shipping cost server-side against the Biteship quote
+            $shippingCost = $this->verifyShippingCost(
+                $request->destination_area_id,
+                $request->shipping_cost,
+                $request->shipping_service,
+                $cartItems
+            );
+
+            $totalAmount = $subtotal + $shippingCost;
             // Update user phone if provided
             /** @var \App\Models\User $user */
             $user = Auth::user();
