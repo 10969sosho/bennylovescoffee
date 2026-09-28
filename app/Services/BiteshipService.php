@@ -87,7 +87,17 @@ class BiteshipService
             ])->post($this->baseUrl . '/rates/couriers', $payload);
 
             if ($response->successful()) {
-                return $response->json()['pricing'] ?? [];
+                $pricing = $response->json()['pricing'] ?? [];
+
+                // Filter out sameday and nextday services for ALL couriers.
+                // Biteship normalizes the 'type' field across all carriers,
+                // so this works universally (JNE, SiCepat, Anteraja, etc.).
+                $pricing = array_values(array_filter($pricing, function ($rate) {
+                    $type = strtolower($rate['type'] ?? '');
+                    return !in_array($type, ['same_day', 'sameday', 'next_day', 'nextday']);
+                }));
+
+                return $pricing;
             } else {
                 Log::warning('Biteship Rates API failed: ' . $response->body());
                 return ['error' => $response->json()['error'] ?? 'Unknown error'];
