@@ -89,12 +89,52 @@ class BiteshipService
             if ($response->successful()) {
                 $pricing = $response->json()['pricing'] ?? [];
 
-                // Filter out sameday and nextday services for ALL couriers.
-                // Biteship normalizes the 'type' field across all carriers,
-                // so this works universally (JNE, SiCepat, Anteraja, etc.).
-                $pricing = array_values(array_filter($pricing, function ($rate) {
-                    $type = strtolower($rate['type'] ?? '');
-                    return !in_array($type, ['same_day', 'sameday', 'next_day', 'nextday']);
+                // Filter out instant, sameday, and nextday/overnight services for ALL couriers.
+                // Biteship returns different fields across couriers:
+                // - service_type: 'overnight', 'instant', 'same_day'
+                // - type / courier_service_code: 'yes' (JNE YES), 'best' (SiCepat BEST), 'ons' (TIKI ONS), 'instant'
+                // - courier_service_name: 'Yakin Esok Sampai (YES)', 'Instant', etc.
+                // - duration: 'X hours' / 'X jam'
+                $blockedKeywords = [
+                    'instant',
+                    'same_day',
+                    'sameday',
+                    'next_day',
+                    'nextday',
+                    'overnight',
+                    'one_day',
+                    'oneday'
+                ];
+                $blockedCodes = array_merge($blockedKeywords, ['yes', 'best', 'ons']);
+
+                $pricing = array_values(array_filter($pricing, function ($rate) use ($blockedKeywords, $blockedCodes) {
+                    $serviceType = strtolower(trim((string)($rate['service_type'] ?? '')));
+                    $type = strtolower(trim((string)($rate['type'] ?? '')));
+                    $code = strtolower(trim((string)($rate['courier_service_code'] ?? '')));
+                    $name = strtolower(trim((string)($rate['courier_service_name'] ?? '')));
+                    $duration = strtolower(trim((string)($rate['duration'] ?? '')));
+
+                    if (in_array($serviceType, $blockedKeywords, true)) {
+                        return false;
+                    }
+                    if (in_array($type, $blockedCodes, true)) {
+                        return false;
+                    }
+                    if (in_array($code, $blockedCodes, true)) {
+                        return false;
+                    }
+
+                    // Block by service name keyword (YES, BEST, ONS, Instant, Same Day, Next Day, Besok Sampai)
+                    if (preg_match('/\b(yes|best|ons|instant|same[ -]?day|next[ -]?day|overnight|besok sampai)\b/i', $name)) {
+                        return false;
+                    }
+
+                    // Block by duration measured in hours/jam (instant / sameday)
+                    if (preg_match('/\b(hours?|jam)\b/i', $duration)) {
+                        return false;
+                    }
+
+                    return true;
                 }));
 
                 return $pricing;
