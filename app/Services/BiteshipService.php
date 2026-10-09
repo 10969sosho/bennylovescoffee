@@ -105,7 +105,7 @@ class BiteshipService
                     'one_day',
                     'oneday'
                 ];
-                $blockedCodes = array_merge($blockedKeywords, ['yes', 'best', 'ons']);
+                $blockedCodes = array_merge($blockedKeywords, ['yes', 'best', 'ons', 'sds', 'nd', 'sd']);
 
                 $pricing = array_values(array_filter($pricing, function ($rate) use ($blockedKeywords, $blockedCodes) {
                     $serviceType = strtolower(trim((string)($rate['service_type'] ?? '')));
