@@ -153,7 +153,7 @@ class AdminController extends Controller
             $validationRules['price'] = 'nullable|numeric|min:0|max:1000000000';
             $validationRules['discount_percentage'] = 'nullable|numeric|min:0|max:100';
             $validationRules['stock'] = 'nullable|integer|min:0|max:1000000000';
-            $validationRules['weight'] = 'required|integer|min:0|max:100000000';
+            $validationRules['weight'] = 'required|integer|min:0|max:100000';
             $validationRules['variants'] = 'required|array|min:1';
             $validationRules['variants.*.name'] = 'required|string|max:255';
             $validationRules['variants.*.quantity'] = 'required|integer|min:0|max:1000000000';
@@ -163,7 +163,7 @@ class AdminController extends Controller
             $validationRules['price'] = 'required|numeric|min:0|max:1000000000';
             $validationRules['discount_percentage'] = 'nullable|numeric|min:0|max:100';
             $validationRules['stock'] = 'required|integer|min:0|max:1000000000';
-            $validationRules['weight'] = 'required|integer|min:0|max:100000000';
+            $validationRules['weight'] = 'required|integer|min:0|max:100000';
         }
 
         $request->validate($validationRules);
@@ -258,7 +258,7 @@ class AdminController extends Controller
             $validationRules['price'] = 'nullable|numeric|min:0|max:1000000000';
             $validationRules['discount_percentage'] = 'nullable|numeric|min:0|max:100';
             $validationRules['stock'] = 'nullable|integer|min:0|max:1000000000';
-            $validationRules['weight'] = 'required|integer|min:0|max:100000000';
+            $validationRules['weight'] = 'required|integer|min:0|max:100000';
             $validationRules['variants'] = 'required|array|min:1';
             $validationRules['variants.*.name'] = 'required|string|max:255';
             $validationRules['variants.*.quantity'] = 'required|integer|min:0|max:1000000000';
@@ -268,7 +268,7 @@ class AdminController extends Controller
             $validationRules['price'] = 'required|numeric|min:0|max:1000000000';
             $validationRules['discount_percentage'] = 'nullable|numeric|min:0|max:100';
             $validationRules['stock'] = 'required|integer|min:0|max:1000000000';
-            $validationRules['weight'] = 'required|integer|min:0|max:100000000';
+            $validationRules['weight'] = 'required|integer|min:0|max:100000';
         }
 
         $request->validate($validationRules);
