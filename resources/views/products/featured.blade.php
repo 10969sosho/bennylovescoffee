@@ -725,8 +725,8 @@
 
 @media (max-width: 480px) {
     .products-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
     }
     
     .page-header h1 {

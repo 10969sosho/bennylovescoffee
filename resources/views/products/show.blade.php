@@ -115,7 +115,7 @@
                     <h3>Pilih Variant</h3>
                     <div class="variants-grid">
                         @foreach($product->getActiveVariants() as $variant)
-                        <div class="variant-option" data-variant-id="{{ $variant->id }}" data-variant-name="{{ $variant->name }}" data-variant-price="{{ $variant->price }}" data-variant-stock="{{ $variant->quantity }}">
+                        <div class="variant-option {{ $variant->quantity <= 0 ? 'disabled' : '' }}" data-variant-id="{{ $variant->id }}" data-variant-name="{{ $variant->name }}" data-variant-price="{{ $variant->price }}" data-variant-stock="{{ $variant->quantity }}" {{ $variant->quantity <= 0 ? 'aria-disabled=true' : '' }}>
                             <div class="variant-card">
                                 <div class="variant-name">{{ $variant->name }}</div>
                                 <div class="variant-price">Rp {{ number_format($variant->price, 0, ',', '.') }}</div>
@@ -123,7 +123,7 @@
                                     @if($variant->quantity > 0)
                                         <span class="in-stock">Stok: {{ $variant->quantity }}</span>
                                     @else
-                                        <span class="out-of-stock">Stok Habis</span>
+                                        <span class="out-of-stock">Habis</span>
                                     @endif
                                 </div>
                             </div>
@@ -217,6 +217,32 @@
             </div>
         </div>
     </div>
+
+    <!-- Sticky Bottom Bar (mobile only) -->
+    <div class="mobile-sticky-buybar">
+        <div class="sticky-price">
+            <span class="sticky-price-label">Harga</span>
+            <span class="sticky-price-value" id="stickyPrice">
+                @if($product->hasVariants())
+                    {{ $product->getPriceRange() }}
+                @elseif($product->discount_percentage > 0)
+                    Rp {{ number_format($product->getDiscountedPrice(), 0, ',', '.') }}
+                @else
+                    Rp {{ number_format($product->price, 0, ',', '.') }}
+                @endif
+            </span>
+        </div>
+        @auth
+            <button type="button" class="sticky-btn sticky-add" id="stickyAddBtn" onclick="stickyAddToCart()">
+                <i class="fas fa-shopping-cart"></i> Tambah
+            </button>
+            <button type="button" class="sticky-btn sticky-buy" onclick="buyNow()">
+                Beli Sekarang
+            </button>
+        @else
+            <a href="{{ route('login') }}" class="sticky-btn sticky-buy">Login untuk Beli</a>
+        @endauth
+    </div>
 </div>
 
 <script>
@@ -255,6 +281,9 @@ function decreaseQuantity() {
 let selectedVariant = null;
 
 function selectVariant(variantElement) {
+    // Out-of-stock variants are disabled - ignore tap
+    if (variantElement.classList.contains('disabled')) return;
+
     // Remove selected class from all variants
     document.querySelectorAll('.variant-option').forEach(option => {
         option.classList.remove('selected');
@@ -288,7 +317,11 @@ function selectVariant(variantElement) {
     
     // Update sidebar display
     updateSidebarVariant(variantName, variantPrice);
-    
+
+    // Update sticky bar price
+    const stickyPrice = document.getElementById('stickyPrice');
+    if (stickyPrice) stickyPrice.textContent = 'Rp ' + parseInt(variantPrice).toLocaleString('id-ID');
+
     // Enable add to cart button
     enableAddToCart();
 }
@@ -312,16 +345,43 @@ function enableAddToCart() {
     const addToCartBtn = document.getElementById('addToCartBtn');
     const addToCartText = document.getElementById('addToCartText');
     const selectedVariantId = document.getElementById('selectedVariantId');
-    
+    const stickyAddBtn = document.getElementById('stickyAddBtn');
+
     if (addToCartBtn && addToCartText && selectedVariantId) {
         addToCartBtn.disabled = false;
         addToCartText.textContent = 'Tambah ke Keranjang';
         selectedVariantId.value = selectedVariant.id;
-        
-        // Debug logging
-        console.log('Variant selected:', selectedVariant);
-        console.log('Variant ID set to:', selectedVariantId.value);
+        if (stickyAddBtn) stickyAddBtn.disabled = false;
     }
+}
+
+// Sticky bar: submit the add-to-cart form
+function stickyAddToCart() {
+    const form = document.getElementById('addToCartForm');
+    if (form) form.submit();
+}
+
+// Sticky bar: add to cart then redirect straight to checkout
+function buyNow() {
+    const form = document.getElementById('addToCartForm');
+    if (!form) {
+        window.location.href = "{{ route('orders.checkout') }}";
+        return;
+    }
+
+    const variantInput = document.getElementById('selectedVariantId');
+    if (variantInput && !variantInput.value) {
+        alert('Pilih variant dulu sebelum beli 🛒');
+        return;
+    }
+
+    fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'text/html, application/json' }
+    })
+    .then(() => { window.location.href = "{{ route('orders.checkout') }}"; })
+    .catch(() => { window.location.href = "{{ route('orders.checkout') }}"; });
 }
 
 // Initialize variant selection
@@ -338,6 +398,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add form validation - hanya untuk produk dengan variant
     const addToCartForm = document.getElementById('addToCartForm');
     if (addToCartForm) {
+        // Disable sticky add button until a variant is picked
+        if (document.getElementById('selectedVariantId')) {
+            const stickyAddBtn = document.getElementById('stickyAddBtn');
+            if (stickyAddBtn) stickyAddBtn.disabled = true;
+        }
+
         addToCartForm.addEventListener('submit', function(e) {
             const variantInput = document.getElementById('selectedVariantId');
             
@@ -1052,6 +1118,133 @@ document.addEventListener('DOMContentLoaded', function() {
     font-size: 0.9rem;
     color: #3498db;
     font-weight: 500;
+}
+
+/* Disabled (out of stock) variant */
+.variant-option.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.variant-option.disabled .variant-card {
+    background: #f3f4f6;
+}
+
+.variant-option.disabled .out-of-stock {
+    color: #9ca3af;
+    font-weight: 700;
+}
+
+/* Mobile Sticky Bottom Buy Bar (hidden on desktop) */
+.mobile-sticky-buybar {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-sticky-buybar {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 64px;
+        z-index: 1001;
+        background: #ffffff;
+        border-top: 1px solid #e5e7eb;
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
+        padding: 10px 12px;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .sticky-price {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sticky-price-label {
+        font-size: 11px;
+        color: #6b7280;
+    }
+
+    .sticky-price-value {
+        font-size: 15px;
+        font-weight: 700;
+        color: #e74c3c;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sticky-btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: none;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+    .sticky-add {
+        background: #ffffff;
+        color: #e74c3c;
+        border: 2px solid #e74c3c;
+    }
+
+    .sticky-add:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .sticky-buy {
+        background: #e74c3c;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    /* Touch-friendly quantity controls */
+    .quantity-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+    }
+
+    .quantity-input {
+        height: 44px;
+        width: 56px;
+        font-size: 16px;
+    }
+
+    .quantity-controls {
+        padding: 0.35rem;
+    }
+
+    /* Touch-friendly variant options */
+    .variant-option {
+        min-height: 44px;
+    }
+
+    .variant-card {
+        padding: 12px;
+    }
+
+    .add-to-cart-btn {
+        min-height: 48px;
+    }
+
+    /* Extra space so content isn't hidden behind sticky bar + bottom nav */
+    .product-detail {
+        padding-bottom: 140px;
+    }
 }
 
 @media (max-width: 768px) {

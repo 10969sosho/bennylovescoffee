@@ -318,7 +318,7 @@ body {
     .checkout-container {
         margin-top: 40px;
         padding: 0 16px;
-        padding-bottom: 120px; /* Space for bottom nav */
+        padding-bottom: 180px; /* Space for sticky summary + bottom nav */
     }
     
     .checkout-grid {
@@ -470,10 +470,11 @@ body {
         font-size: 16px;
     }
     
-    /* Order Summary Mobile */
+    /* Order Summary Mobile - sticky above the global bottom nav */
     .order-summary {
         position: sticky;
-        bottom: 20px;
+        bottom: 70px;
+        z-index: 999;
         margin-top: 20px;
         border-radius: 12px;
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);

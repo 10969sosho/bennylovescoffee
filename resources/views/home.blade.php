@@ -258,7 +258,7 @@ if (document.readyState === 'loading') {
                                 <div class="flash-sale-badge">-{{ $item->getDiscountPercentage() }}%</div>
                                 <div class="flash-sale-image">
                                     @if($item->product->main_photo)
-                                        <img src="{{ asset('storage/' . $item->product->main_photo) }}" alt="{{ $item->product->name }}" class="flash-sale-product-image">
+                                        <img src="{{ asset('storage/' . $item->product->main_photo) }}" alt="{{ $item->product->name }}" class="flash-sale-product-image" loading="lazy" decoding="async">
                                     @else
                                         <div class="flash-sale-placeholder"></div>
                                     @endif
@@ -418,11 +418,11 @@ if (document.readyState === 'loading') {
                             <a href="{{ route('products.show', $product->slug) }}" class="product-link">
                                 <div class="product-image-container">
                                     @if($product->main_photo)
-                                        <img src="{{ asset('storage/' . $product->main_photo) }}" alt="{{ $product->name }}" class="product-image">
+                                        <img src="{{ asset('storage/' . $product->main_photo) }}" alt="{{ $product->name }}" class="product-image" loading="lazy" decoding="async">
                                     @elseif($product->foto)
-                                        <img src="{{ asset('storage/' . $product->foto) }}" alt="{{ $product->name }}" class="product-image">
+                                        <img src="{{ asset('storage/' . $product->foto) }}" alt="{{ $product->name }}" class="product-image" loading="lazy" decoding="async">
                                     @elseif($product->image)
-                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="product-image">
+                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="product-image" loading="lazy" decoding="async">
                                     @else
                                         <div class="product-placeholder">
                                             <i class="fas fa-coffee"></i>
@@ -557,11 +557,11 @@ if (document.readyState === 'loading') {
                             <a href="{{ route('products.show', $product->slug) }}" class="product-link">
                                 <div class="product-image-container">
                                     @if($product->main_photo)
-                                        <img src="{{ asset('storage/' . $product->main_photo) }}" alt="{{ $product->name }}" class="product-image">
+                                        <img src="{{ asset('storage/' . $product->main_photo) }}" alt="{{ $product->name }}" class="product-image" loading="lazy" decoding="async">
                                     @elseif($product->foto)
-                                        <img src="{{ asset('storage/' . $product->foto) }}" alt="{{ $product->name }}" class="product-image">
+                                        <img src="{{ asset('storage/' . $product->foto) }}" alt="{{ $product->name }}" class="product-image" loading="lazy" decoding="async">
                                     @elseif($product->image)
-                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="product-image">
+                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="product-image" loading="lazy" decoding="async">
                                     @else
                                         <div class="product-placeholder">
                                             <i class="fas fa-coffee"></i>
@@ -759,6 +759,12 @@ if (typeof moveProdukTerbaruCarousel === 'undefined') {
 <script>
 // Flash Sale Timer Countdown
 function startFlashSaleTimer() {
+    // Elements #hours/#minutes/#seconds don't exist in this page - bail out safely
+    const hoursEl = document.getElementById('hours');
+    const minutesEl = document.getElementById('minutes');
+    const secondsEl = document.getElementById('seconds');
+    if (!hoursEl || !minutesEl || !secondsEl) return;
+
     // Set timer to 24 hours from now (or you can set a specific end time)
     const endTime = new Date().getTime() + (24 * 60 * 60 * 1000); // 24 hours from now
     
@@ -771,14 +777,14 @@ function startFlashSaleTimer() {
             const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
             
-            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            hoursEl.textContent = hours.toString().padStart(2, '0');
+            minutesEl.textContent = minutes.toString().padStart(2, '0');
+            secondsEl.textContent = seconds.toString().padStart(2, '0');
         } else {
             // Timer expired
-            document.getElementById('hours').textContent = '00';
-            document.getElementById('minutes').textContent = '00';
-            document.getElementById('seconds').textContent = '00';
+            hoursEl.textContent = '00';
+            minutesEl.textContent = '00';
+            secondsEl.textContent = '00';
             
             // Optionally hide the flash sale section or show expired message
             const flashSaleSection = document.querySelector('.flash-sale');

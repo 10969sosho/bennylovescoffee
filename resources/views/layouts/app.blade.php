@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Bennylovescoffee - Premium Coffee Equipment')</title>
+    
+    <!-- PWA & Mobile Meta Tags -->
+    <meta name="theme-color" content="#2c1810">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BennyCoffee">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link rel="icon" type="image/png" href="{{ asset('images/icon.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
@@ -164,13 +174,15 @@
         function toggleMobileAccount() {
             const mobileAccountMenu = document.getElementById('mobileAccountMenu');
             const mobileAccountArrow = document.querySelector('.mobile-account-arrow');
-            
+
+            if (!mobileAccountMenu) return;
+
             if (mobileAccountMenu.classList.contains('show')) {
                 mobileAccountMenu.classList.remove('show');
-                mobileAccountArrow.style.transform = 'rotate(0deg)';
+                if (mobileAccountArrow) mobileAccountArrow.style.transform = 'rotate(0deg)';
             } else {
                 mobileAccountMenu.classList.add('show');
-                mobileAccountArrow.style.transform = 'rotate(180deg)';
+                if (mobileAccountArrow) mobileAccountArrow.style.transform = 'rotate(180deg)';
             }
         }
 
@@ -316,5 +328,23 @@
             </div>
         @endauth
     </div>
+
+    <!-- PWA Install Banner -->
+    <div id="pwa-install-banner" style="display: none; position: fixed; top: 12px; left: 16px; right: 16px; max-width: 440px; margin: 0 auto; background: #2c1810; color: #ffffff; padding: 12px 16px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); z-index: 99999; align-items: center; justify-content: space-between; gap: 12px; font-family: inherit;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="{{ asset('images/icon-192.png') }}" alt="Bennylovescoffee" style="width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0;">
+            <div>
+                <div style="font-weight: 700; font-size: 0.9rem; line-height: 1.2;">Install Bennylovescoffee</div>
+                <div style="font-size: 0.75rem; color: #d1c7bd;">Buka lebih cepat & mudah di HP</div>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+            <button id="pwa-install-btn" style="background: #f59e0b; color: #1a1a1a; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer;">Install</button>
+            <button id="pwa-close-btn" style="background: transparent; color: #ffffff; border: none; font-size: 1.2rem; line-height: 1; cursor: pointer; padding: 4px 6px;">&times;</button>
+        </div>
+    </div>
+
+    <!-- PWA Script -->
+    <script src="{{ asset('js/pwa.js') }}"></script>
 </body>
 </html>

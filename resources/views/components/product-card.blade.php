@@ -4,11 +4,11 @@
     <a href="{{ route('products.show', $product->slug) }}" class="product-link">
         <div class="product-image-container">
             @if($product->main_photo)
-                <img src="{{ asset('storage/' . $product->main_photo) }}" alt="{{ $product->name }}" class="product-image">
+                <img src="{{ asset('storage/' . $product->main_photo) }}" alt="{{ $product->name }}" class="product-image" loading="lazy" decoding="async">
             @elseif($product->foto)
-                <img src="{{ asset('storage/' . $product->foto) }}" alt="{{ $product->name }}" class="product-image">
+                <img src="{{ asset('storage/' . $product->foto) }}" alt="{{ $product->name }}" class="product-image" loading="lazy" decoding="async">
             @elseif($product->image)
-                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="product-image">
+                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="product-image" loading="lazy" decoding="async">
             @else
                 <div class="product-placeholder">
                     <i class="fas fa-coffee"></i>

@@ -488,10 +488,21 @@ body {
     
     .item-checkbox {
         margin-top: 4px;
-        width: 18px;
-        height: 18px;
+        width: 22px;
+        height: 22px;
         cursor: pointer;
         accent-color: #d4af37;
+        transform: scale(1.8);
+        transform-origin: left center;
+    }
+    
+    .seller-header input[type="checkbox"],
+    .select-all input[type="checkbox"] {
+        width: 22px;
+        height: 22px;
+        transform: scale(1.8);
+        transform-origin: left center;
+        margin-right: 12px;
     }
     
     .item-image {
@@ -563,16 +574,16 @@ body {
     }
     
     .qty-btn {
-        width: 24px;
-        height: 24px;
+        width: 44px;
+        height: 44px;
         border: 1px solid #d1d5db;
-        border-radius: 4px;
+        border-radius: 8px;
         background: white;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        font-size: 12px;
+        font-size: 16px;
         color: #374151;
         transition: all 0.3s ease;
     }
@@ -584,12 +595,13 @@ body {
     }
     
     .qty-input {
-        width: 35px;
+        width: 44px;
+        height: 44px;
         text-align: center;
         border: 1px solid #d1d5db;
-        border-radius: 4px;
+        border-radius: 8px;
         padding: 2px;
-        font-size: 12px;
+        font-size: 14px;
         font-weight: 500;
     }
     
@@ -615,13 +627,14 @@ body {
     }
     
     .icon-btn {
-        width: 28px;
-        height: 28px;
+        width: 44px;
+        height: 44px;
         border: none;
-        background: none;
+        background: #fef2f2;
+        border-radius: 8px;
         cursor: pointer;
-        color: #9ca3af;
-        font-size: 12px;
+        color: #ef4444;
+        font-size: 16px;
         transition: all 0.3s ease;
     }
     
@@ -703,6 +716,60 @@ body {
     .shop-btn {
         padding: 14px 28px;
         font-size: 16px;
+    }
+}
+
+/* Very small screens (e.g. 360px) - keep cart rows from getting cramped */
+@media (max-width: 400px) {
+    .cart-container {
+        padding: 0 10px;
+        padding-bottom: 210px;
+    }
+
+    .seller-group {
+        padding: 12px;
+    }
+
+    .cart-item {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .item-image {
+        width: 52px;
+        height: 52px;
+    }
+
+    .item-title {
+        font-size: 13px;
+    }
+
+    .item-actions {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .quantity-control {
+        gap: 4px;
+    }
+
+    .qty-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .qty-input {
+        width: 40px;
+        height: 40px;
+    }
+
+    .item-buttons .icon-btn {
+        width: 40px;
+        height: 40px;
     }
 }
 </style>
