@@ -282,6 +282,14 @@
         .admin-main-content * {
             text-align: left;
         }
+
+        /* Ensure form controls enforce explicit LTR and native cursor handling */
+        input, textarea, select {
+            direction: ltr !important;
+            text-align: left !important;
+            unicode-bidi: normal !important;
+            writing-mode: horizontal-tb !important;
+        }
         
         .admin-main-content .text-center {
             text-align: center !important;

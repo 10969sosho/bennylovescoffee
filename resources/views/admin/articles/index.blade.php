@@ -35,6 +35,9 @@
                                 <input type="text" 
                                        id="search" 
                                        name="search" 
+                                       dir="ltr"
+                                       autocomplete="off"
+                                       spellcheck="false"
                                        value="{{ request('search') }}"
                                        placeholder="Search by title or content..."
                                        class="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">

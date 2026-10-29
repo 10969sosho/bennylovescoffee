@@ -35,6 +35,9 @@
                                 <input type="text" 
                                        id="search" 
                                        name="search" 
+                                       dir="ltr"
+                                       autocomplete="off"
+                                       spellcheck="false"
                                        value="{{ request('search') }}"
                                        placeholder="Search by brand name or description..."
                                        class="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
