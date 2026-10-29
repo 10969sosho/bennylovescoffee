@@ -73,13 +73,29 @@ class AdminController extends Controller
 
         $query = Product::with(['category', 'brand', 'variants']);
 
-        // Search by name or description
-        if ($request->has('search') && $request->search) {
-            $searchTerm = $request->search;
+        // Search by name, brand, category, or sku/variants (prioritizing name relevance)
+        if ($request->has('search') && filled($request->search)) {
+            $searchTerm = trim($request->search);
             $query->where(function($q) use ($searchTerm) {
                 $q->where('name', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('description', 'like', '%' . $searchTerm . '%');
+                  ->orWhereHas('brand', function($bq) use ($searchTerm) {
+                      $bq->where('name', 'like', '%' . $searchTerm . '%');
+                  })
+                  ->orWhereHas('category', function($cq) use ($searchTerm) {
+                      $cq->where('name', 'like', '%' . $searchTerm . '%');
+                  })
+                  ->orWhereHas('variants', function($vq) use ($searchTerm) {
+                      $vq->where('name', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('sku', 'like', '%' . $searchTerm . '%');
+                  });
             });
+
+            // Order by exact name prefix match first so most relevant products appear on top
+            $query->orderByRaw("CASE 
+                WHEN name LIKE ? THEN 1 
+                WHEN name LIKE ? THEN 2 
+                ELSE 3 
+            END", [$searchTerm . '%', '%' . $searchTerm . '%']);
         }
 
         // Filter by category
