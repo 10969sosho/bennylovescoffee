@@ -73,7 +73,7 @@ class AdminController extends Controller
 
         $query = Product::with(['category', 'brand', 'variants']);
 
-        // Search by name, brand, category, or sku/variants (prioritizing name relevance)
+        // Search by name, brand, category, or variants (prioritizing name relevance)
         if ($request->has('search') && filled($request->search)) {
             $searchTerm = trim($request->search);
             $query->where(function($q) use ($searchTerm) {
@@ -85,8 +85,7 @@ class AdminController extends Controller
                       $cq->where('name', 'like', '%' . $searchTerm . '%');
                   })
                   ->orWhereHas('variants', function($vq) use ($searchTerm) {
-                      $vq->where('name', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('sku', 'like', '%' . $searchTerm . '%');
+                      $vq->where('name', 'like', '%' . $searchTerm . '%');
                   });
             });
 
