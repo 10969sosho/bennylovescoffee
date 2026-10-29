@@ -5,8 +5,8 @@
 
 @section('content')
     <div class="w-full">
-        <div class="admin-card p-8">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8">Create New Product</h2>
+        <div class="admin-card p-4 sm:p-6 md:p-8">
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-8">Create New Product</h2>
 
             <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" id="productForm">
                 @csrf
@@ -29,7 +29,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-3">
                             Product Images
                         </label>
-                        <div class="w-1/2">
+                        <div class="w-full md:w-2/3 lg:w-1/2">
                             <div class="grid grid-cols-3 gap-3">
                             <!-- Main Photo (Position 1) -->
                             <div class="aspect-square">

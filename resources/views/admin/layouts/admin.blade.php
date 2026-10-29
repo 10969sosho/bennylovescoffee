@@ -262,12 +262,35 @@
             background: #f8fafc;
         }
         
-        /* Content Alignment */
-        .admin-main-content .container {
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
+        /* Touch-friendly horizontal table scrolling */
+        .overflow-x-auto {
+            -webkit-overflow-scrolling: touch;
         }
-        
+
+        /* Mobile-only elements (matches sidebar breakpoint) */
+        .mobile-only {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-only {
+                display: inline-flex;
+            }
+        }
+
+        /* Dark backdrop behind mobile sidebar */
+        #sidebarBackdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 999;
+            display: none;
+        }
+
+        #sidebarBackdrop.show {
+            display: block;
+        }
+
         .admin-main-content h1,
         .admin-main-content h2,
         .admin-main-content h3 {
@@ -576,9 +599,14 @@
         <div class="admin-sidebar text-white">
             <!-- Sidebar Header -->
             <div class="sidebar-header">
-                <div class="flex items-center space-x-3">
-                    <img src="{{ asset('images/icon.png') }}" alt="Bennylovescoffee Icon" class="w-8 h-8 object-contain">
-                    <h1 class="text-xl font-bold">Bennylovescoffee Admin</h1>
+                <div class="flex items-center justify-between space-x-3">
+                    <div class="flex items-center space-x-3 min-w-0">
+                        <img src="{{ asset('images/icon.png') }}" alt="Bennylovescoffee Icon" class="w-8 h-8 object-contain flex-shrink-0">
+                        <h1 class="text-xl font-bold truncate">Bennylovescoffee Admin</h1>
+                    </div>
+                    <button type="button" id="sidebarClose" class="mobile-only items-center justify-center w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 text-white" aria-label="Close menu">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             </div>
             
@@ -701,29 +729,37 @@
                 </div>
             </div>
         </div>
-        
+
+        <!-- Mobile sidebar backdrop -->
+        <div id="sidebarBackdrop"></div>
+
         <!-- Main Content -->
         <div class="admin-main-content flex-1 flex flex-col overflow-hidden">
             <!-- Top Bar -->
             <header class="bg-white shadow-sm border-b">
-                <div class="flex items-center justify-between px-6 py-4">
-                    <div class="text-left">
-                        <h2 class="text-2xl font-bold text-gray-800">@yield('page-title', 'Dashboard')</h2>
-                        @if(isset($page_subtitle))
-                        <p class="text-sm text-gray-600 mt-1">@yield('page-subtitle', '')</p>
-                        @endif
+                <div class="flex flex-wrap items-center justify-between gap-3 px-3 sm:px-6 py-4">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <button type="button" id="sidebarToggle" class="sidebar-toggle mobile-only items-center justify-center w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 flex-shrink-0" aria-label="Open menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <div class="text-left min-w-0">
+                            <h2 class="text-lg sm:text-2xl font-bold text-gray-800 truncate">@yield('page-title', 'Dashboard')</h2>
+                            @if(isset($page_subtitle))
+                            <p class="text-sm text-gray-600 mt-1 truncate">@yield('page-subtitle', '')</p>
+                            @endif
+                        </div>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <a href="{{ route('home') }}" target="_blank" class="admin-btn text-white px-4 py-2 rounded-lg">
-                            <i class="fas fa-external-link-alt mr-2"></i>View Store
+                    <div class="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+                        <a href="{{ route('home') }}" target="_blank" class="admin-btn text-white px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base whitespace-nowrap">
+                            <i class="fas fa-external-link-alt sm:mr-2"></i><span class="hidden sm:inline">View Store</span><span class="sm:hidden">Store</span>
                         </a>
                     </div>
                 </div>
             </header>
             
             <!-- Content -->
-            <main class="flex-1 overflow-y-auto p-6">
-                <div class="container mx-auto">
+            <main class="flex-1 overflow-y-auto p-3 sm:p-6">
+                <div class="container mx-auto px-0 sm:px-4">
                     <div class="text-left">
                         @yield('content')
                     </div>
@@ -759,10 +795,27 @@
         });
         
         // Mobile sidebar toggle
+        function setSidebarOpen(open) {
+            const sidebar = document.querySelector('.admin-sidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (!sidebar) return;
+            sidebar.classList.toggle('open', open);
+            if (backdrop) backdrop.classList.toggle('show', open);
+        }
+
         function toggleSidebar() {
             const sidebar = document.querySelector('.admin-sidebar');
-            sidebar.classList.toggle('open');
+            setSidebarOpen(!sidebar.classList.contains('open'));
         }
+
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('#sidebarToggle')) {
+                event.stopPropagation();
+                toggleSidebar();
+            } else if (event.target.closest('#sidebarBackdrop') || event.target.closest('#sidebarClose')) {
+                setSidebarOpen(false);
+            }
+        });
         
         // Close sidebar when clicking outside on mobile
         document.addEventListener('click', function(event) {
@@ -771,16 +824,15 @@
             
             if (window.innerWidth <= 768) {
                 if (!sidebar.contains(event.target) && !sidebarToggle?.contains(event.target)) {
-                    sidebar.classList.remove('open');
+                    setSidebarOpen(false);
                 }
             }
         });
         
         // Handle window resize
         window.addEventListener('resize', function() {
-            const sidebar = document.querySelector('.admin-sidebar');
             if (window.innerWidth > 768) {
-                sidebar.classList.remove('open');
+                setSidebarOpen(false);
             }
         });
     </script>

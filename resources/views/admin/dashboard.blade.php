@@ -28,7 +28,7 @@
     <div class="admin-card p-6 mb-8">
         <h2 class="text-xl font-semibold mb-4">Recent Orders</h2>
         @if($recentOrders->count() > 0)
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto -mx-4 sm:mx-0">
             <table class="w-full">
                 <thead>
                     <tr class="border-b">

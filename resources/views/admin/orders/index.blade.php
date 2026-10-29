@@ -480,52 +480,52 @@ div.dt-buttons {
 </div>
 
 <div class="orders-card">
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto -mx-4 sm:mx-0">
         <table id="ordersTable" class="table">
             <thead>
                 <tr>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Order #</th>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Customer</th>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Phone</th>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Date</th>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Items</th>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Total</th>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Status</th>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Payment</th>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Shipping</th>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
+                    <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Order #</th>
+                    <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Customer</th>
+                    <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Phone</th>
+                    <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Date</th>
+                    <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Items</th>
+                    <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Total</th>
+                    <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Status</th>
+                    <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Payment</th>
+                    <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Shipping</th>
+                    <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y-2 divide-gray-200">
             @foreach($orders as $order)
             <tr class="hover:bg-gray-50 transition border-b border-gray-200">
-                <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                     <strong class="text-gray-900">{{ $order->order_number }}</strong>
                 </td>
-                <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                     <div>
                         <div class="text-sm font-medium text-gray-900">{{ $order->user->name }}</div>
                         <div class="text-sm text-gray-500">{{ $order->user->email }}</div>
                     </div>
                 </td>
-                <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                     <div class="text-sm text-gray-900">{{ $order->user->phone ?? '-' }}</div>
                 </td>
-                <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                     <div class="text-sm text-gray-900">{{ $order->created_at->format('M d, Y H:i') }}</div>
                 </td>
-                <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                     <div class="text-sm text-gray-900">{{ $order->orderItems->count() }} items</div>
                 </td>
-                <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                     <div class="text-sm font-medium text-gray-900">Rp {{ number_format($order->total_amount + ($order->shipping_cost ?? 0), 0, ',', '.') }}</div>
                 </td>
-                <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                     <span class="status-badge status-{{ $order->status }}">
                         {{ ucfirst($order->status) }}
                     </span>
                 </td>
-                <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                     @if($order->payment_proof)
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             Uploaded
@@ -536,14 +536,14 @@ div.dt-buttons {
                         </span>
                     @endif
                 </td>
-                <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                     @if($order->tracking_number)
                         <div class="text-sm text-gray-900">{{ $order->tracking_number }}</div>
                     @else
                         <span class="text-sm text-gray-500">-</span>
                     @endif
                 </td>
-                <td class="px-6 py-6 whitespace-nowrap">
+                <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap">
                     <a href="{{ route('admin.orders.show', $order) }}" class="btn-view">
                         <i class="fas fa-eye"></i>
                         View

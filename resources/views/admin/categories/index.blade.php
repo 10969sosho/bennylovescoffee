@@ -4,9 +4,9 @@
 
 @section('content')
     <div class="w-full">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-3xl font-bold text-gray-800">Categories Management</h2>
-            <a href="{{ route('admin.categories.create') }}" class="admin-btn text-white px-6 py-3 rounded-lg">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Categories Management</h2>
+            <a href="{{ route('admin.categories.create') }}" class="admin-btn text-white px-6 py-3 rounded-lg w-full sm:w-auto text-center">
                 <i class="fas fa-plus mr-2"></i>Add New Category
             </a>
         </div>
@@ -29,8 +29,8 @@
                     <label for="search" class="block text-sm font-medium text-gray-700 mb-3">
                         <i class="fas fa-search mr-2 text-blue-500"></i>Search Categories
                     </label>
-                    <div class="flex items-center space-x-4">
-                        <div class="flex-1">
+                    <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                        <div class="w-full flex-1">
                             <div class="relative">
                                 <input type="text" 
                                        id="search" 
@@ -46,11 +46,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex space-x-2">
-                            <button type="submit" class="admin-btn text-white px-6 py-3 rounded-lg border-2 border-blue-600">
+                        <div class="w-full sm:w-auto grid grid-cols-2 sm:flex gap-2">
+                            <button type="submit" class="admin-btn text-white py-2.5 px-5 rounded-lg border-2 border-blue-600 flex justify-center items-center">
                                 <i class="fas fa-search mr-2"></i>Search
                             </button>
-                            <a href="{{ route('admin.categories.index') }}" class="px-6 py-3 border-2 border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                            <a href="{{ route('admin.categories.index') }}" class="py-2.5 px-5 border-2 border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition flex justify-center items-center">
                                 <i class="fas fa-times mr-2"></i>Clear
                             </a>
                         </div>
@@ -62,7 +62,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-3">
                         <i class="fas fa-filter mr-2 text-blue-500"></i>Filter Options
                     </label>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
                             <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
                             <select id="status" name="status" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
@@ -117,18 +117,18 @@
                 <table class="w-full">
                     <thead class="bg-gray-100 border-b-2 border-gray-300">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Category</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Description</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Products</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Status</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Created</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
+                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Category</th>
+                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Description</th>
+                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Products</th>
+                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Status</th>
+                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Created</th>
+                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y-2 divide-gray-200">
                         @forelse($categories as $category)
                         <tr class="hover:bg-gray-50 transition border-b border-gray-200">
-                            <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-16 w-16">
                                         @if($category->image)
@@ -147,28 +147,28 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                                 <div class="text-sm text-gray-900 max-w-xs">
                                     {{ $category->description ?: 'No description provided' }}
                                 </div>
                             </td>
-                            <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                                 <div class="flex items-center">
                                     <span class="text-sm text-gray-900">{{ $category->products_count ?? 0 }}</span>
                                     <span class="ml-2 text-xs text-gray-500">products</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                                 <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $category->is_active ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200' }}">
                                     {{ $category->is_active ? 'Active' : 'Inactive' }}
                                 </span>
                             </td>
-                            <td class="px-6 py-6 whitespace-nowrap border-r border-gray-200">
+                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                                 <div class="text-sm text-gray-900">{{ $category->created_at->format('M d, Y') }}</div>
                                 <div class="text-xs text-gray-500">{{ $category->created_at->format('H:i') }}</div>
                             </td>
-                            <td class="px-6 py-6 whitespace-nowrap text-sm font-medium">
-                                <div class="flex space-x-2">
+                            <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="whitespace-nowrap flex items-center space-x-2">
                                     <a href="{{ route('admin.categories.show', $category) }}"
                                        class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition border border-gray-200"
                                        title="View Category">
@@ -196,7 +196,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="6" class="px-3 sm:px-6 py-12 text-center text-gray-500">
                                 <i class="fas fa-tags text-4xl mb-4"></i>
                                 <p class="text-lg">No categories found</p>
                                 <p class="text-sm">Try adjusting your filters or create a new category</p>
@@ -209,7 +209,7 @@
             
             <!-- Pagination -->
             @if($categories->hasPages())
-            <div class="px-6 py-4 border-t border-gray-200">
+            <div class="px-3 sm:px-6 py-4 border-t border-gray-200">
                 {{ $categories->links() }}
             </div>
             @endif
