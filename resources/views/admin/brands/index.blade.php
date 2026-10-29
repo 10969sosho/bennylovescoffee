@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="w-full">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3 sm:mb-4">
             <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Brands Management</h2>
             <a href="{{ route('admin.brands.create') }}" class="admin-btn text-white px-6 py-3 rounded-lg w-full sm:w-auto text-center">
                 <i class="fas fa-plus mr-2"></i>Add New Brand
@@ -18,15 +18,15 @@
         @endif
 
         <!-- Search and Filters -->
-        <div class="admin-card p-6 mb-6 border-2 border-blue-200">
-            <div class="flex items-center mb-4">
+        <div class="admin-card p-3 sm:p-4 md:p-5 mb-4 border-2 border-blue-200">
+            <div class="flex items-center mb-2 sm:mb-2.5">
                 <i class="fas fa-search text-blue-500 mr-2"></i>
                 <h3 class="text-lg font-semibold text-gray-800">Search & Filters</h3>
             </div>
             <form method="GET" action="{{ route('admin.brands.index') }}" class="space-y-4">
                 <!-- Search Bar -->
-                <div class="border-2 border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <label for="search" class="block text-sm font-medium text-gray-700 mb-3">
+                <div class="border-2 border-gray-200 rounded-lg p-2.5 sm:p-3.5 bg-gray-50">
+                    <label for="search" class="block text-sm font-medium text-gray-700 mb-2 sm:mb-2.5">
                         <i class="fas fa-search mr-2 text-blue-500"></i>Search Brands
                     </label>
                     <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
@@ -58,8 +58,8 @@
                 </div>
 
                 <!-- Filters -->
-                <div class="border-2 border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">
+                <div class="border-2 border-gray-200 rounded-lg p-2.5 sm:p-3.5 bg-gray-50">
+                    <label class="block text-sm font-medium text-gray-700 mb-2 sm:mb-2.5">
                         <i class="fas fa-filter mr-2 text-blue-500"></i>Filter Options
                     </label>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -117,18 +117,18 @@
                 <table class="w-full">
                     <thead class="bg-gray-100 border-b-2 border-gray-300">
                         <tr>
-                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Brand</th>
-                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Description</th>
-                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Products</th>
-                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Status</th>
-                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Created</th>
-                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
+                            <th class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Brand</th>
+                            <th class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Description</th>
+                            <th class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Products</th>
+                            <th class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Status</th>
+                            <th class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Created</th>
+                            <th class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y-2 divide-gray-200">
                         @forelse($brands as $brand)
                         <tr class="hover:bg-gray-50 transition border-b border-gray-200">
-                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
+                            <td class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-16 w-16">
                                         @if($brand->image)
@@ -147,27 +147,27 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
+                            <td class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                                 <div class="text-sm text-gray-900 max-w-xs">
                                     {{ $brand->description ?: 'No description provided' }}
                                 </div>
                             </td>
-                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
+                            <td class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                                 <div class="flex items-center">
                                     <span class="text-sm text-gray-900">{{ $brand->products_count ?? 0 }}</span>
                                     <span class="ml-2 text-xs text-gray-500">products</span>
                                 </div>
                             </td>
-                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
+                            <td class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                                 <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $brand->is_active ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200' }}">
                                     {{ $brand->is_active ? 'Active' : 'Inactive' }}
                                 </span>
                             </td>
-                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
+                            <td class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                                 <div class="text-sm text-gray-900">{{ $brand->created_at->format('M d, Y') }}</div>
                                 <div class="text-xs text-gray-500">{{ $brand->created_at->format('H:i') }}</div>
                             </td>
-                            <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-medium">
+                            <td class="px-2.5 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap text-sm font-medium">
                                 <div class="whitespace-nowrap flex items-center space-x-2">
                                     <a href="{{ route('admin.brands.show', $brand) }}"
                                        class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition border border-gray-200"
@@ -209,7 +209,7 @@
             
             <!-- Pagination -->
             @if($brands->hasPages())
-            <div class="px-3 sm:px-6 py-4 border-t border-gray-200">
+            <div class="px-2.5 sm:px-4 py-3 border-t border-gray-200">
                 {{ $brands->links() }}
             </div>
             @endif

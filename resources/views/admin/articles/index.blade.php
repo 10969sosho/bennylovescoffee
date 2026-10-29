@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="w-full">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3 sm:mb-4">
             <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Articles Management</h2>
             <a href="{{ route('admin.articles.create') }}" class="admin-btn text-white px-6 py-3 rounded-lg w-full sm:w-auto text-center">
                 <i class="fas fa-plus mr-2"></i>Create Article
@@ -18,15 +18,15 @@
         @endif
 
         <!-- Search and Filters -->
-        <div class="admin-card p-6 mb-6 border-2 border-green-200">
-            <div class="flex items-center mb-4">
+        <div class="admin-card p-3 sm:p-4 md:p-5 mb-4 border-2 border-green-200">
+            <div class="flex items-center mb-2 sm:mb-2.5">
                 <i class="fas fa-search text-green-500 mr-2"></i>
                 <h3 class="text-lg font-semibold text-gray-800">Search & Filters</h3>
             </div>
             <form method="GET" action="{{ route('admin.articles.index') }}" class="space-y-6">
                 <!-- Search Bar -->
-                <div class="border-2 border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <label for="search" class="block text-sm font-medium text-gray-700 mb-3">
+                <div class="border-2 border-gray-200 rounded-lg p-2.5 sm:p-3.5 bg-gray-50">
+                    <label for="search" class="block text-sm font-medium text-gray-700 mb-2 sm:mb-2.5">
                         <i class="fas fa-search mr-2 text-green-500"></i>Search Articles
                     </label>
                     <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
@@ -58,8 +58,8 @@
                 </div>
 
                 <!-- Filters -->
-                <div class="border-2 border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">
+                <div class="border-2 border-gray-200 rounded-lg p-2.5 sm:p-3.5 bg-gray-50">
+                    <label class="block text-sm font-medium text-gray-700 mb-2 sm:mb-2.5">
                         <i class="fas fa-filter mr-2 text-green-500"></i>Filter Options
                     </label>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -93,18 +93,18 @@
                 <table class="w-full">
                     <thead class="bg-gray-100 border-b-2 border-gray-300">
                         <tr>
-                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Article</th>
-                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Excerpt</th>
-                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Views</th>
-                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Status</th>
-                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Published</th>
-                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
+                            <th class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Article</th>
+                            <th class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Excerpt</th>
+                            <th class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Views</th>
+                            <th class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Status</th>
+                            <th class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200">Published</th>
+                            <th class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y-2 divide-gray-200">
                         @forelse($articles as $article)
                         <tr class="hover:bg-gray-50 transition border-b border-gray-200">
-                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
+                            <td class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-20 w-20">
                                         @if($article->featured_image)
@@ -124,25 +124,25 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm border-r border-gray-200">
+                            <td class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm border-r border-gray-200">
                                 <div class="text-sm text-gray-900 max-w-xs">
                                     <div class="line-clamp-3">
                                         {{ $article->excerpt ?: Str::limit(strip_tags($article->content), 120) }}
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
+                            <td class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                                 <div class="text-sm text-gray-900">
                                     <div class="font-semibold text-lg">{{ $article->views }}</div>
                                     <div class="text-xs text-gray-500">views</div>
                                 </div>
                             </td>
-                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
+                            <td class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                                 <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $article->is_published ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-yellow-100 text-yellow-800 border border-yellow-200' }}">
                                     {{ $article->is_published ? 'Published' : 'Draft' }}
                                 </span>
                             </td>
-                            <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
+                            <td class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm whitespace-nowrap border-r border-gray-200">
                                 <div class="text-sm text-gray-900">
                                     @if($article->published_at)
                                         <div class="font-semibold">{{ $article->published_at ? $article->published_at->format('M d, Y') : 'Not published' }}</div>
@@ -152,7 +152,7 @@
                                     @endif
                                 </div>
                             </td>
-                            <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-medium">
+                            <td class="px-2.5 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap text-sm font-medium">
                                 <div class="whitespace-nowrap flex items-center space-x-2">
                                     <a href="{{ route('admin.articles.show', $article) }}" 
                                        class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition border border-gray-200">
@@ -191,7 +191,7 @@
             
             <!-- Pagination -->
             @if($articles->hasPages())
-            <div class="px-3 sm:px-6 py-4 border-t border-gray-200">
+            <div class="px-2.5 sm:px-4 py-3 border-t border-gray-200">
                 {{ $articles->links() }}
             </div>
             @endif

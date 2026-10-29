@@ -408,9 +408,14 @@
         .admin-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
+            border-radius: 16px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        @media (max-width: 640px) {
+            .admin-card {
+                border-radius: 12px;
+            }
         }
         .admin-btn {
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
@@ -737,7 +742,7 @@
         <div class="admin-main-content flex-1 flex flex-col overflow-hidden">
             <!-- Top Bar -->
             <header class="bg-white shadow-sm border-b">
-                <div class="flex flex-wrap items-center justify-between gap-3 px-3 sm:px-6 py-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 px-3 sm:px-4 py-2.5 sm:py-3">
                     <div class="flex items-center gap-3 min-w-0 flex-1">
                         <button type="button" id="sidebarToggle" class="sidebar-toggle mobile-only items-center justify-center w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 flex-shrink-0" aria-label="Open menu">
                             <i class="fas fa-bars"></i>
@@ -758,8 +763,8 @@
             </header>
             
             <!-- Content -->
-            <main class="flex-1 overflow-y-auto p-3 sm:p-6">
-                <div class="container mx-auto px-0 sm:px-4">
+            <main class="flex-1 overflow-y-auto p-2 sm:p-3 md:p-4">
+                <div class="w-full px-1 sm:px-2">
                     <div class="text-left">
                         @yield('content')
                     </div>
