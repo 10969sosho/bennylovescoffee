@@ -267,12 +267,12 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Mobile-only elements (matches sidebar breakpoint) */
+        /* Mobile/Tablet/Landscape-phone elements (matches sidebar breakpoint) */
         .mobile-only {
             display: none;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px), (max-height: 500px) and (orientation: landscape) {
             .mobile-only {
                 display: inline-flex;
             }
@@ -390,8 +390,8 @@
             background: rgba(255, 255, 255, 0.5);
         }
         
-        /* Responsive Sidebar */
-        @media (max-width: 768px) {
+        /* Responsive Sidebar for Mobile, Tablet, and Landscape Phones */
+        @media (max-width: 1024px), (max-height: 500px) and (orientation: landscape) {
             .admin-sidebar {
                 transform: translateX(-100%);
                 transition: transform 0.3s ease;
@@ -817,12 +817,17 @@
             }
         });
         
-        // Close sidebar when clicking outside on mobile
+        // Check if viewport is in drawer mode (mobile, tablet, or phone landscape)
+        function isDrawerMode() {
+            return window.innerWidth <= 1024 || (window.innerHeight <= 500 && window.innerWidth > window.innerHeight);
+        }
+
+        // Close sidebar when clicking outside on mobile / drawer mode
         document.addEventListener('click', function(event) {
             const sidebar = document.querySelector('.admin-sidebar');
             const sidebarToggle = document.querySelector('.sidebar-toggle');
             
-            if (window.innerWidth <= 768) {
+            if (isDrawerMode()) {
                 if (!sidebar.contains(event.target) && !sidebarToggle?.contains(event.target)) {
                     setSidebarOpen(false);
                 }
@@ -831,7 +836,7 @@
         
         // Handle window resize
         window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
+            if (!isDrawerMode()) {
                 setSidebarOpen(false);
             }
         });
